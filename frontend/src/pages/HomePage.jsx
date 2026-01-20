@@ -1,4 +1,3 @@
-// Page d'accueil
 import { useNavigate } from 'react-router-dom';
 
 const HomePage = () => {
