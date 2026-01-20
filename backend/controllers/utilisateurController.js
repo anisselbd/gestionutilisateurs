@@ -6,6 +6,12 @@ const JWT_SECRET = process.env.JWT_SECRET;
 
 export const addUtilisateur = async (req, res) => {
     const { nom, prenom, email, motDePasse } = req.body;
+    if (!nom || !prenom || !email || !motDePasse) {
+        return res.status(400).json({ message: "Tous les champs sont obligatoires." });
+    }
+    if (motDePasse.length < 6) {
+        return res.status(400).json({ message: "Le mot de passe doit contenir au moins 6 caractères." });
+    }
     try {
         const utilisateurExistant = await utilisateurModel.getUtilisateurByEmail(email);
         if (utilisateurExistant.length > 0) {
@@ -25,6 +31,9 @@ export const addUtilisateur = async (req, res) => {
 
 export const loginUtilisateur = async (req, res) => {
     const { email, motDePasse } = req.body;
+    if (!email || !motDePasse) {
+        return res.status(400).json({ message: "Email et mot de passe requis." });
+    }
     try {
         const utilisateurExistant = await utilisateurModel.getUtilisateurByEmail(email);
         if (utilisateurExistant.length === 0) {
@@ -80,15 +89,19 @@ export const getUtilisateurById = async (req, res) => {
 };
 
 export const updateUtilisateur = async (req, res) => {
-    const { nom, prenom, email, motDePasse } = req.body;
+    const { nom, prenom, motDePasse } = req.body;
     const idUtilisateur = req.params.id;
+    if (!nom || !prenom || !motDePasse) {
+        return res.status(400).json({ message: "Nom, prénom et mot de passe requis." });
+    }
     try {
         const existant = await utilisateurModel.getUtilisateurById(idUtilisateur);
         if (existant.length === 0) {
             return res.status(404).json({ message: "Utilisateur non trouvé." });
         }
+        const emailExistant = existant[0].email;
         const mdpHash = bcrypt.hashSync(motDePasse, 10);
-        await utilisateurModel.updateUtilisateur(nom, prenom, email, mdpHash, idUtilisateur);
+        await utilisateurModel.updateUtilisateur(nom, prenom, emailExistant, mdpHash, idUtilisateur);
         res.status(200).json({ message: "Utilisateur modifié avec succès." });
     } catch (error) {
         console.error("Erreur modification:", error);

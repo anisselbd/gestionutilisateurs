@@ -6,9 +6,9 @@ const router = express.Router();
 
 router.post('/addUtilisateur', utilisateurController.addUtilisateur);
 router.post('/loginUtilisateur', utilisateurController.loginUtilisateur);
-router.get('/allUtilisateurs', utilisateurController.getAllUtilisateurs);
-router.get('/utilisateurById/:id', utilisateurController.getUtilisateurById);
-router.put('/updateUtilisateur/:id', utilisateurController.updateUtilisateur);
+router.get('/allUtilisateurs', checkAuth, utilisateurController.getAllUtilisateurs);
+router.get('/utilisateurById/:id', checkAuth, utilisateurController.getUtilisateurById);
+router.put('/updateUtilisateur/:id', checkAuth, utilisateurController.updateUtilisateur);
 router.delete('/deleteUtilisateur/:id', [checkAuth, checkAdmin], utilisateurController.deleteUtilisateur);
 
 export default router;
